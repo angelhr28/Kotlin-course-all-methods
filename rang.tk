@@ -19,6 +19,6 @@ fun main(args: Array<String>){
         println(g)
     }
     println("------------------")
-	val rango:Boolean= (1..12 step 2)last == 11 // retorno a una valor true o false// comentar esto no olvidar 
+	val rango:Boolean= (1..12 step 2).last == 11 // retorno a una valor true o false 
     println(rango)
 }
