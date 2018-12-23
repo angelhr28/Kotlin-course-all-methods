@@ -1,0 +1,21 @@
+fun main(args: Array<String>){
+	var a:String="abc"
+    var b:String? ="abc"// se usa el signo de interrogacion para definir posibles null
+//     b=null
+    var c: String?="abc"
+    c=null
+    var lA=a.length
+	var lB=b?.length ?: "el valor es null"// aqui afirmo que b puede ser null y sea ese el caso imprimira ""
+    var lC=c?.length // al no poner ?: me imprime el null
+    println(lA)
+    println(lB)
+    println(lC)
+    
+    lB?.let{// trabajas con la parte =! null
+        var suma=lB
+        println(suma)
+    }
+    lB.let{ // tranajas con la parte = null 
+        print(lB)
+    }
+}
