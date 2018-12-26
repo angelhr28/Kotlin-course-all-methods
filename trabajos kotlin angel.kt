@@ -13,34 +13,36 @@ fun main(args: Array<String>){
   	var b:Int = 1
     
 //     while(b!=0){
-// 		println("1.lista de personas")
-//         println("2.mayor edad")
-//         println("3.menor edad")
-//         println("4.lista de hombres")
-//         println("5.lista de mujeres")
-//         println("6.mas de dos hermanos")
-//         println("7.formato")
-//         println("8.usuario")
+   	     println("1.lista de personas")
+         println("2.mayor edad")
+         println("3.menor edad")
+         println("4.lista de hombres")
+         println("5.lista de mujeres")
+         println("6.mas de dos hermanos")
+         println("7.formato")
+         println("8.usuario")
+         println("		")
 //         print("opcion")
-//         var opcion:Int =1
+        var opcion:Int =2
         
-     //   when(opcion){
-	 	 lista(Lpersonas)	
-         println("")
-    	 println ("la edad mas alta es ${mayor(Lpersonas)}")
-         println("")
-         println ("la edad mas baja es ${menor(Lpersonas)}")
-    	 println("")
-    	 sexoh(Lpersonas)
-         println("")    
-    	 sexom(Lpersonas)
-		 println("")
-    	 hermano(Lpersonas)
-         println("")  
-    	 formato(Lpersonas)
-         usuario(Lpersonas)
-// 		}}
-        }
+        when(opcion){
+	 	 1-> {lista(Lpersonas)	
+         println("")}
+    	 2->{println ("la edad mas alta es ${mayor(Lpersonas)}")
+         println("")}
+         3->{println ("la edad mas baja es ${menor(Lpersonas)}")
+    	 println("")}
+         4->{sexoh(Lpersonas)
+         println("")}    
+         5->{sexom(Lpersonas)
+	     println("")}
+         6->{hermano(Lpersonas)
+         println("")}  
+         7->{formato(Lpersonas)}
+         8->{usuario(Lpersonas)}
+  		}
+}
+//         }
 
 ///////////////////////////////////////////////////////////////////////
 fun lista(persona:ArrayList<Persona>){
@@ -122,7 +124,7 @@ fun formato(num:ArrayList<Persona>){
      for(i:Int in num.indices){
        
         val user = listOf(num[i].correo)	
-        val user2=user.map{x->x.split("@")}
+        val user2=user.map{x->x.split("@hotmail.com","@gmail.com")}
         println(user2)
          }
     }
