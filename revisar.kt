@@ -1,3 +1,10 @@
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import java.lang.Object
+import java.text.Format
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 data class Persona (var nombre:String, var apeP:String,var apeM:String, var fecha:String, var documento:Int, var sexo:Char, var hermanos:Int ,var correo:String,var name1: String?=null, var user: String? = null)
  
 fun main(args: Array<String>){
@@ -20,6 +27,29 @@ fun main(args: Array<String>){
         val primeroN= lpersonas [h].nombre.substringBefore(" ")
         lpersonas[h].name1= primeroN
     }
+        
+         var edades = lpersonas.map {
+        var formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        LocalDate.parse(it.fecha, formatter)
+    }
+    val menores = lpersonas.filter {
+        val format = DateTimeFormatter.ofPattern("dd/MM/yyy")
+        it.fecha == format.format(edades!!.min())
+    }
+    
+
+	val mayores = lpersonas.filter{
+     	val formato = DateTimeFormatter.ofPattern("dd/MM/yyy")
+        it.fecha == formato.format(edades!!.max())
+    }
+    
+         
+    for (i in lpersonas.indices) {
+        val usuario = lpersonas[i].correo.substringBefore("@")
+        lpersonas[i].user = usuario
+    }
+   
+   
 	     
 //     //     while(b!=0){
    	     println("1.lista de personas")
@@ -37,10 +67,11 @@ fun main(args: Array<String>){
         when(opcion){
 	 	 1-> {println(lpersonas.indices )	
          println("")}
-//     	 2->{println ("la edad mas alta es ${mayor(Lpersonas)}")
-//          println("")}
-//       3->{println ("la edad mas baja es ${menor(Lpersonas)}")
-//     	 println("")}
+     	 2->{println(edades!!.min().toString())
+			println(menores)
+          println("")}
+         3->{println(edades!!.max().toString())
+			println(mayores)}
          4->{println(ListHombres)
             println("")}    
          5->{println(ListMujeres)
@@ -48,42 +79,14 @@ fun main(args: Array<String>){
          6->{println(Hermanos)
 	     println("")}  
          7->{ println(formato) }
-         8->{println(usuarios)}
+         8->{ println("Estos son sus usuarios")
+   				 lpersonas.forEach {
+    			    println("${it.user}")
+    		}}
          9->{ lpersonas.forEach {
    		     println("${it.name1}")
     		}}
   		}
-        
 
-    for (i in lpersonas.indices) {
-        val usuario = lpersonas[i].correo.substringBefore("@")
-        lpersonas[i].user = usuario
-    }
-    println("Estos son sus usuarios")
-    lpersonas.forEach {
-        println("${it.user}")
-    }
+   
 }
-
-////////////////////////////////////////////////////////////////////// 
-/////////////////////////////////////////////////////////////////////////////////////////7
-// fun mayor(edades:ArrayList<Persona>):Int{
-//       	    var aux2 = 100000000	
-//     	for(a in edades.indices){
-//             if(aux2 > edades[a].edad){
-//                 aux2=edades[a].edad
-//             }
-//         }
-//                return  2018 - aux2 
-// }
-//////////////////////////////////////////////////////////////////////7
-// fun menor (edades:ArrayList<Persona>):Int{
-//       	    var aux = 0	
-//     	for(a in edades.indices){
-//             if(aux<edades[a].edad){
-//                 aux=edades[a].edad
-//             }
-//         }
-//                return 2018-aux 
-// }    
-////////////////////////////////////
