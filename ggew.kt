@@ -2,52 +2,61 @@ import java.util.*
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+fun main(args: Array<String>){
+    var vista =TicketView()
+}
+
 interface TicketMVP {
     interface View {
-        fun mostrarMensaje(mensaje: String)
-        fun cargaVistaDeImpresion()
-        fun imprimitTicket(ticket: String)
-        fun imprimirInformeDiario(informe: String)
-    }
+            fun mostrarMensaje(mensaje: String)
+            fun cargaVistaDeImpresion()
+            fun imprimitTicket(ticket: String)
+            fun imprimirInformeDiario(informe: String)
+    	}
     
     interface Presenter {
-        fun aperturarCaja(fecha: Date) // Validar que no sea mayor a la fecha actual
-        fun cajaAperturada() // Notificar a la vista que se aperturo la caja
-        fun mostrarMensaje(mensaje: String)
-        fun generarTicket(nombre: String, ciudad: String)
-        fun imprimirTicket(ticket: String)
-        fun cerrarCaja()
-        fun imprimirInforme(informe: String)
-    }
+            fun aperturarCaja(fecha: Date) 
+            fun cajaAperturada() 
+        	fun mostrarMensaje(mensaje: String)
+            fun generarTicket(nombre: String, ciudad: listCiudad)
+            fun imprimirTicket(ticket: String)
+            fun cerrarCaja()
+            fun imprimirInforme(informe: String)
+         }
     
     interface Model {
-        // Guarda en una variable la fecha en string para imprimirla en los tickets
-        // e inicializa el correlativo en 1
-        fun aperturarCaja(fecha: Date)
-        // Requerimiento es guardar la lista de personas, sus destinos y que dia fueron
-        fun generarTicket(nombre: String, ciudad: String)
-        fun cerrarCaja()
-    }
-}
+            fun aperturarCaja(fecha: Date)
+            fun generarTicket(nombre: String, ciudad: listCiudad)
+            fun cerrarCaja()
+    	}
+	}
   class TicketView():TicketMVP.View{
       var presenter: TicketPresenter
       
       init{
-          presenter= TicketPresenter(this)
           val hace3dias = sumarDias(Date(), -3)
-          presenter.aperturarCaja(hace3dias)
-		  var nombre = "angel"
-          var ciudad = "lima"
-          presenter.generarTicket(nombre , ciudad)     
+          presenter= TicketPresenter(this)
+          presenter.cerrarCaja()
+          presenter.aperturarCaja(hace3dias)  
+          presenter.aperturarCaja(hace3dias) 
+   		  presenter.generarTicket("angel", listCiudad.lima)   
+          presenter.generarTicket("jose", listCiudad.tumbes)
+          presenter.generarTicket("angela", listCiudad.ica)  
+      	  presenter.cerrarCaja()
       }
-        override fun mostrarMensaje(mensaje: String){
+      override fun cargaVistaDeImpresion(){
+            println("La caja a sido aperturada con exito")
+      }
+      override fun imprimitTicket(ticket: String){
+      		println("Confirmacion de ticket generado  $ticket")    
+      }
+      override fun imprimirInformeDiario(informe: String){
+          	println("La relacion de compra de tickets es:  $informe")
+      }  
+      override fun mostrarMensaje(mensaje: String){
             println(mensaje)
         }
-        override fun cargaVistaDeImpresion(){
-            println(" la caja ha sido aperturada")
-        }
-        override fun imprimitTicket(ticket: String){}
-        override fun imprimirInformeDiario(informe: String){}
+        
 
   }
   class TicketPresenter(var view:TicketMVP.View): TicketMVP.Presenter{
@@ -55,51 +64,87 @@ interface TicketMVP {
         var model=TicketModel(this)  
             
  		override fun aperturarCaja(fecha: Date){  	   
-        	 if(Date() >fecha) model.aperturarCaja(fecha) else view.mostrarMensaje("no se puede")
+        	if(Date() >fecha) model.aperturarCaja(fecha) 
+            else view.mostrarMensaje("Disculpe, la caja no se pudo aperturar")
         } 
         override fun cajaAperturada() {
             view.cargaVistaDeImpresion()
-           
         }
         override fun mostrarMensaje(mensaje: String){
             view.mostrarMensaje(mensaje)
         }
-        override fun generarTicket(nombre: String, ciudad: String){
+        override fun generarTicket(nombre: String, ciudad:listCiudad){
             model.generarTicket(nombre,ciudad)
         }
         override fun imprimirTicket(ticket: String){
-            
+            view.imprimitTicket(ticket)
         }
-        override fun cerrarCaja(){}
-        override fun imprimirInforme(informe: String){} 
+      	override fun imprimirInforme(informe: String){
+        	view.imprimirInformeDiario(informe)  
+      	}   
+      	override fun cerrarCaja(){
+            model.cerrarCaja()
+        }
+        
   }
   class TicketModel(var presenter: TicketMVP.Presenter):TicketMVP.Model{
-        
-      	override fun aperturarCaja(fecha: Date){
-            lista(fecha)
-            if(fecha!= null )presenter.cajaAperturada() else presenter.mostrarMensaje("la caja no se aperturo")
-        	}
-        override fun generarTicket(nombre: String, ciudad: String){
-			presenter.imprimirTicket("la persona ${nombre} compro la entrada en la ciudad ${ciudad}")
+  	
+      var contador = 0
+      var listaPersonas= mutableListOf<Persona>()
+      var fechaActual=""	
+      override fun aperturarCaja(fecha: Date){
+            if(contador>0){
+                return presenter.mostrarMensaje("lo sentimos, la caja ya fue abierta")
+            }
+            contador++
+            fechaActual= fecha.getString()
+            presenter.cajaAperturada()
+        }
+        override fun generarTicket(nombre: String, ciudad: listCiudad){
+			contador++
+            listaPersonas.add(Persona(nombre,ciudad,fechaActual,contador))
+            var Text="""
+ 			/////////////////tiket emitido///////////////
+            Numero de boleto: $contador
+            /////////////////////////////////////////////
+            Usuario: $nombre
+            Lugar de destino: $ciudad
+            Fecha de emision: $fechaActual 
+            /////////////////////////////////////////////
+            """
+            
+            presenter.imprimirTicket(Text)
         }
        
-        override fun cerrarCaja(){}
+        override fun cerrarCaja(){
+       		
+            if(contador == 0){
+                return presenter.mostrarMensaje("La caja nunca fue abierta")
+            }
+           
+            var listafechas = listaPersonas.filter{it.fecha ==fechaActual}
+        	var Text2="""
+			/////////////////Registro de compras///////////////
+            Fecha del registro: ${fechaActual}
+            ///////////////////////////////////////////////////
+            Numero de tickets vendidos: ${listafechas.count()}
+            Lista de pasajeros
+            """
+            listafechas.forEach{Text2 += "\t.${it.nombre}\n"}
+            contador = 0
+            presenter.imprimirInforme(Text2)
+        
+        }
   }
   
-  fun lista(fecha:Date){
-          var listaFechas = listOf(fecha)
-  }
-fun main(args: Array<String>){
-    val fechaActual = Date()
-    val formatter = SimpleDateFormat("dd/MM/yyyy")
-    val stringDate = formatter.format(fechaActual)
-    var nombre= "angel"
-    var ciudad = "lima"
-    var vista =TicketView()
-    
-//      print(vista)
+data class Persona(var nombre:String,var ciudad:listCiudad,var fecha:String , var nroTicket:Int )
+enum class listCiudad{
+    lima , tumbes, ica
 }
-
+fun Date.getString(format: String = "dd/MM/yyyy"): String {
+    val formatter = SimpleDateFormat(format)
+    return formatter.format(this)
+}
 fun sumarDias(fecha: Date, dias: Int) : Date {
     val	calendar = Calendar.getInstance()
     calendar.setTime(fecha)
